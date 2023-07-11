@@ -1,0 +1,25 @@
+version: 3
+
+dotenv: ['.env']
+
+tasks:
+  default:
+    desc: Список задач
+    cmds:
+      - task --list
+
+  build:
+    desc: Сборка проекта
+    deps:
+      - build-windows
+      - build-linux
+
+  build-windows:
+    desc: Сборка проекта под Windows
+    cmds:
+      - GOOS=windows GOARCH=amd64 go build -o build/zetflix.exe
+
+  build-linux:
+    desc: Сборка проекта под Linux
+    cmds:
+      - GOOS=linux GOARCH=amd64 go build -o build/zetflix
