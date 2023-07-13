@@ -25,9 +25,11 @@ func init() {
 }
 
 func main() {
-	const homepage = "https://%s.zetfix-online.net/"
+	const hostname = "https://%s.zetfix-online.net/"
 	delay := time.Second
 
+	homepage := fmt.Sprintf(hostname, strings.ToLower(time.Now().Format("_2Jan")))
+	logrus.Infof("Homepage: %s", homepage)
 	driver := agouti.ChromeDriver(
 		agouti.ChromeOptions("args", []string{
 			"start-maximized",
@@ -37,29 +39,39 @@ func main() {
 			"--disable-3d-apis",
 		}),
 	)
+	logrus.Info("*** Driver: configured ***")
 
+	logrus.Info("Driver: starting...")
 	if err := driver.Start(); err != nil {
 		logrus.Panicf("Invalid driver starting: %s", err)
 	}
 	defer func() {
+		logrus.Info("Driver: stopping...")
 		if err := driver.Stop(); err != nil {
-			logrus.Panicf("Invalid driver stoping: %s", err)
+			logrus.Panicf("Invalid driver stopping: %s", err)
 		}
+		logrus.Info("*** Driver: stopped ***")
 	}()
+	logrus.Info("*** Driver: started ***")
 
+	logrus.Info("Page: creation...")
 	page, err := driver.NewPage()
 	if err != nil {
 		logrus.Panicf("Invalid page: %s", err)
 	}
+	logrus.Info("*** Page: created ***")
 
 	go func() {
-		if err := page.Navigate(fmt.Sprintf(homepage, strings.ToLower(time.Now().Format("_2Jan")))); err != nil {
+		logrus.Info("Page: loading...")
+		if err := page.Navigate(homepage); err != nil {
 			logrus.Panicf("Invalid navigation: %s", err)
 		}
+		logrus.Info("*** Page: loaded ***")
 	}()
 
 	for {
 		if count, _ := page.WindowCount(); count == 0 {
+			logrus.Info("*** All windows closed ***")
 			break
 		}
 

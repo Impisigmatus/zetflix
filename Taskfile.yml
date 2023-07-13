@@ -1,6 +1,14 @@
 version: 3
 
-dotenv: ['.env']
+includes:
+  build-amd64:
+    taskfile: Taskfile.build.yml
+    vars:
+      ARCH: amd64
+  build-arm64:
+    taskfile: Taskfile.build.yml
+    vars:
+      ARCH: arm64
 
 tasks:
   default:
@@ -8,18 +16,8 @@ tasks:
     cmds:
       - task --list
 
-  build:
+  build-all:
     desc: Сборка проекта
     deps:
-      - build-windows
-      - build-linux
-
-  build-windows:
-    desc: Сборка проекта под Windows
-    cmds:
-      - GOOS=windows GOARCH=amd64 go build -o build/zetflix.exe
-
-  build-linux:
-    desc: Сборка проекта под Linux
-    cmds:
-      - GOOS=linux GOARCH=amd64 go build -o build/zetflix
+      - build-amd64:all
+      - build-arm64:all

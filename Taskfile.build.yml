@@ -1,0 +1,31 @@
+version: 3
+
+vars:
+  APP: zetflix
+  BUILD_DIR: build
+
+tasks:
+  all:
+    desc: Сборка под все платформы
+    deps:
+      - windows
+      - linux
+      - macos
+
+  windows:
+    vars:
+      OS: windows
+    cmds:
+      - GOOS={{.OS}} GOARCH={{.ARCH}} go build -o {{.BUILD_DIR}}/{{.ARCH}}/{{.OS}}/{{.APP}}.exe
+
+  linux:
+    vars:
+      OS: linux
+    cmds:
+      - GOOS={{.OS}} GOARCH={{.ARCH}} go build -o {{.BUILD_DIR}}/{{.ARCH}}/{{.OS}}/{{.APP}}
+
+  macos:
+    vars:
+      OS: macos
+    cmds:
+      - GOOS=darwin GOARCH={{.ARCH}} go build -o {{.BUILD_DIR}}/{{.ARCH}}/{{.OS}}/{{.APP}}
